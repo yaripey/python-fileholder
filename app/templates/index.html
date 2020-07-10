@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, user!</h1>
+    <h1>Hi, {{ current_user.username }}!</h1>
     <div>Here are your files:</div>
 {% endblock %}
