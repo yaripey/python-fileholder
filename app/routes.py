@@ -4,6 +4,7 @@ from flask import render_template
 from flask import flash
 from flask import redirect
 from flask import url_for
+from flask import request
 
 from flask_login import current_user, login_user
 from flask_login import logout_user
@@ -11,14 +12,26 @@ from flask_login import login_required
 
 from app.forms import LoginForm
 from app.forms import RegistrationForm
+from app.forms import FileForm
+
 from app.models import User
 from app import db
 
+from werkzeug.utils import secure_filename
+
+import os
+
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html', title = 'Welcome')
+    form = FileForm()
+    if form.validate_on_submit():
+        f = form.file.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(app.instance_path, 'files', filename))
+        return redirect(url_for('index'))
+    return render_template('index.html', title = 'Welcome', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

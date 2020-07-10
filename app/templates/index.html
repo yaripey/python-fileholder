@@ -2,5 +2,16 @@
 
 {% block content %}
     <h1>Hi, {{ current_user.username }}!</h1>
-    <div>Here are your files:</div>
+    <h2>You can upload your file in a form below.</h2>
+    <form action="" method="POST" enctype="multipart/form-data" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.file.label }} <br>
+            {{ form.file }}
+            {% for error in form.file.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
 {% endblock %}
