@@ -17,6 +17,7 @@ from app.forms import FileForm
 from app.models import User
 from app import db
 
+from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
 import os
@@ -45,10 +46,10 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        next_page = requests.args.get('next')
+        next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != "":
             next_page = url_for('index')
-        return redirect(nex_page)
+        return redirect(next_page)
     return render_template('login.html', title='Sign in', form=form)
 
 @app.route('/logout')
