@@ -21,14 +21,18 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+    def uploaded_files(self):
+        return File.query.filter(User.id == File.user_id).order_by(File.timestamp.desc())
+
 
 
 class File(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.String(36), primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    path = db.Column(db.String(None), unique = True)
+    path = db.Column(db.String(100), unique = True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    expire_time = db.Column(db.DateTime)
+    expire_time = db.Column(db.DateTime, default=datetime.utcnow)
+    name = db.Column(db.String(100), index=True)
 
     def __repr__(self):
         return '<File {}>'.format(self.path)
