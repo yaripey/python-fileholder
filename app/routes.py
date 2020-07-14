@@ -15,12 +15,18 @@ from app.forms import RegistrationForm
 from app.forms import FileForm
 
 from app.models import User
+from app.models import File
 from app import db
 
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
+from uuid import uuid4
+
+from datetime import datetime
+
 import os
+
 
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
@@ -30,7 +36,19 @@ def index():
     if form.validate_on_submit():
         f = form.file.data
         filename = secure_filename(f.filename)
-        f.save(os.path.join(app.instance_path, 'files', filename))
+        id = str(uuid4())
+        path = os.path.join(app.instance_path, 'files', id)
+        file = File(
+            id = id,
+            user_id = current_user.id,
+            path = path,
+            # expire_time = form.expiration.data,
+            name = filename
+        )
+        db.session.add(file)
+        db.session.commit()
+        f.save(path)
+        flash('Successfully uploaded your file!')
         return redirect(url_for('index'))
     return render_template('index.html', title = 'Welcome', form=form)
 
@@ -52,10 +70,12 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign in', form=form)
 
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
@@ -63,10 +83,24 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username = form.username.data, email=form.email.data)
+        user = User(
+            username = form.username.data,
+            email=form.email.data
+        )
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Congratulation, you are now a registered user!')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Refister', form=form)
+    return render_template('register.html', title='Register', form=form)
+
+
+@app.route('/user/<username>')
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    files = current_user.uploaded_files().all()
+    sizes = {}
+    for file in files:
+        sizes[file.id] = str(os.stat(file.path).st_size)
+    print(sizes)
+    return render_template('user.html', user=user, files=files, sizes=sizes)

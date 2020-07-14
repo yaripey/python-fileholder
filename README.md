@@ -12,8 +12,6 @@ You also need **FLASK_APP** variable set to "fileholder.py"
 
 Then you need to run these commands to set up a database:
 
-> flask db init
-> flask db migrate -m "First migration"
 > flask db upgrade
 
 Now you can just run *flask run* and everything should work just fine.
