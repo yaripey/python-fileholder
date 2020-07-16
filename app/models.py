@@ -1,6 +1,8 @@
 from app import db
 from app import login
 
+from os import stat
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from datetime import datetime
@@ -36,6 +38,9 @@ class File(db.Model):
 
     def __repr__(self):
         return '<File {}>'.format(self.path)
+
+    def size(self):
+        return str(stat(self.path).st_size)
 
 @login.user_loader
 def load_user(id):
