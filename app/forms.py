@@ -1,12 +1,14 @@
 from flask_wtf import FlaskForm
 
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateTimeField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 from app.models import User
 from app.models import File
+
+from datetime import datetime
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators = [DataRequired()])
@@ -36,7 +38,20 @@ class FileForm(FlaskForm):
         FileRequired(),
         FileAllowed(['jpg', 'png', 'txt'], 'Unaccaptable file format.')
         ])
-    expiration = DateTimeField("Choose your file expiration time.")
+    expiration = SelectField(
+        "Choose your file expiration time.",
+        choices=[
+            (1, '1 minute'),
+            (10, '10 minutes'),
+            (30, '30 minutes'),
+            (60, '1 hours'),
+            (300, '5 hours'),
+            (1440, '1 day'),
+            (4320, '3 days'),
+            (10080, '7 days')
+        ],
+        validate_choice = False
+    )
     submit = SubmitField('Upload')
 
 

@@ -25,6 +25,7 @@ from werkzeug.utils import secure_filename
 from uuid import uuid4
 
 from datetime import datetime
+from datetime import timedelta
 
 import os
 
@@ -35,6 +36,7 @@ import os
 def index():
     form = FileForm()
     if form.validate_on_submit():
+        print('Form successfully validated.')
         f = form.file.data
         filename = secure_filename(f.filename)
         id = str(uuid4())
@@ -43,12 +45,14 @@ def index():
             id = id,
             user_id = current_user.id,
             path = path,
-            # expire_time = form.expiration.data,
+            expire_time = datetime.utcnow() + timedelta(minutes = int(form.expiration.data)),
             name = filename
         )
         db.session.add(file)
         db.session.commit()
+        print('File added to db.')
         f.save(path)
+        print('FIle saved.')
         flash('Successfully uploaded your file!')
         return redirect(url_for('index'))
     return render_template('index.html', title = 'Welcome', form=form)
@@ -100,10 +104,13 @@ def register():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     files = current_user.uploaded_files().all()
+    for file in files:
+        file.is_expired()
     sizes = {}
+    files = current_user.uploaded_files().all()
     for file in files:
         sizes[file.id] = file.size()
-    print(sizes)
+        
     return render_template('user.html', user=user, files=files, sizes=sizes)
 
 
