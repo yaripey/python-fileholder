@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>User: {{ file.author.username }} uploaded {{ file.name }}</h1>
-    <hr>
-    File size is {{ size }} b.
-    <br>
+    <h1>{{ file.name }}</h1>
+    <h4>Uploaded by <a class="username"href="{{ url_for('user', username=file.author.username) }}">{{ file.author.username }}</a></h2>
+    <div class="filesize">File size is {{ size }} b.</div>
+    <div class="exire">Expires at {{ file.expire_time }}</div>
     <a href="{{ url_for('download', fileid=file.id) }}">Download</a>
 {% endblock %}
