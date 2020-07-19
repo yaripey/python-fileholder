@@ -40,9 +40,6 @@ ul {
     margin-top: -20px;
 }
 
-.logo, .header:hover{
-    
-}
 
 .logo{
     font-family: Segoe UI Black;
@@ -68,6 +65,6 @@ ul {
     z-index: 10;
     background: white;
     padding-left: 10px;
-    paddin-right: 10px;
+    padding-right: 10px;
     padding-top: 50px;
 }
