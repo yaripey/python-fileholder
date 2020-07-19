@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="form">
     <h1>Hi, {{ current_user.username }}!</h1>
     <h2>You can upload your file in a form below.</h2>
     <form action="" method="POST" enctype="multipart/form-data" novalidate>
@@ -21,4 +22,5 @@
         </p>
         <p>{{ form.submit() }}</p>
     </form>
+    </div>
 {% endblock %}

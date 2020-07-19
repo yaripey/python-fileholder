@@ -5,28 +5,31 @@
         {% else %}
         <title>Fileholder</title>
         {% endif %}
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
-        <div>
-            Fileholder:
-            <a href="{{ url_for('index') }}">Home</a>
+        <div class = "header">
+            <div class="logo">Fileholder</div>
+            <a class='header-button' href="{{ url_for('index') }}">Home</a>
             {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}">Login</a>
+            <a class='header-button' href="{{ url_for('login') }}">Login</a>
             {% else %}
-            <a href="{{ url_for('user', username=current_user.username) }}">My Files</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+            <a class='header-button' href="{{ url_for('user', username=current_user.username) }}">My Files</a>
+            <a class='header-button' href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
         </div>
-        <hr>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
+        <div class="container">
+            <hr>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>
