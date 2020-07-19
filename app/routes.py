@@ -5,6 +5,7 @@ from flask import flash
 from flask import redirect
 from flask import url_for
 from flask import request
+from flask import send_from_directory
 
 from flask_login import current_user, login_user
 from flask_login import logout_user
@@ -28,7 +29,7 @@ from datetime import datetime
 import os
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -101,6 +102,25 @@ def user(username):
     files = current_user.uploaded_files().all()
     sizes = {}
     for file in files:
-        sizes[file.id] = str(os.stat(file.path).st_size)
+        sizes[file.id] = file.size()
     print(sizes)
     return render_template('user.html', user=user, files=files, sizes=sizes)
+
+
+@app.route('/file/<fileid>', methods=['GET', 'POST'])
+def filepage(fileid):
+    file = File.query.filter_by(id=fileid).first_or_404()
+    size = file.size()
+    return render_template('file.html', file=file, size=size)
+
+
+@app.route('/download/<fileid>', methods=['GET', 'POST'])
+def download(fileid):
+    uploads = os.path.join(app.instance_path, 'files')
+    file = File.query.filter_by(id=fileid).first_or_404()
+    return send_from_directory(
+        directory=uploads, 
+        filename=file.id,
+        as_attachment = True,
+        attachment_filename = file.name
+        )

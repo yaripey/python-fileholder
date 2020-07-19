@@ -1,9 +1,11 @@
 <table>
     <tr valign="top">
         <td>
-            {{ file.author.username }} uploaded: {{ file.name }}
+            {{ file.author.username }} uploaded: <a href="{{ url_for('filepage', fileid=file.id) }}">{{ file.name }}</a>
             <br>
-            File size is: {{ sizes[file.id] }} b
+            File size is: {{ sizes[file.id] }} b.
+            <br>
+            
         </td>
     </tr>
 </table>
