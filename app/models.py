@@ -1,7 +1,7 @@
 from app import db
 from app import login
-
-from os import stat
+import os
+from app import app
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -40,7 +40,20 @@ class File(db.Model):
         return '<File {}>'.format(self.path)
 
     def size(self):
-        return str(stat(self.path).st_size)
+        return str(os.stat(self.path).st_size)
+
+    def is_expired(self):
+        if self.expire_time > datetime.utcnow():
+            print('False')
+            return False
+        else:
+            db.session.delete(self)
+            db.session.commit()
+            path = os.path.join(app.instance_path, 'files', self.id)
+            os.remove(path)
+            print("True")
+            return True
+            
 
 @login.user_loader
 def load_user(id):

@@ -3,7 +3,7 @@
 {% block content %}
     <h1>User: {{ file.author.username }} uploaded {{ file.name }}</h1>
     <hr>
-    File size is {{ size }}
+    File size is {{ size }} b.
     <br>
     <a href="{{ url_for('download', fileid=file.id) }}">Download</a>
 {% endblock %}
